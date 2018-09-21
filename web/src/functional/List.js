@@ -3,7 +3,7 @@
  *
  * @author zuye.zheng
  */
-export class List {
+export default class List {
 
     /**
      * Zip up 2 arrays into 1.

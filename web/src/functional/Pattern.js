@@ -1,101 +1,57 @@
+import type {Check, CheckableValue, CheckReturn} from 'functional/CaseClass.js'
+
+type CaseBranch<A> = (Object) => A;
+
 /**
- * Poor-mans scala-esque pattern matcher. Current form mostly useful for handling nulls more elegantly.
+ * Define a pattern matching case statement.
  *
  * @author zuye.zheng
  */
-export class Pattern<A> {
+export default class Pattern<A> {
 
-    _named: Array<string>;
-
-    constructor(named: Array<string>) {
-        this._named = named;
+    static v(value: mixed): Check {
+        return (v: CheckableValue) => value === v;
     }
 
-    get(i: number): string {
-        return this._named[i];
+    static _(): CheckReturn {
+        return true;
     }
 
-    case<B>(match: string, f: Object => B): Cases<A, B> {
-        return new Cases(this).case(match, f);
+    static n(v: CheckableValue) {
+        return v == null;
     }
 
-}
+    static case(matcher: Check, f: CaseBranch<A>): Pattern<A> {
+        return new Pattern().case(matcher, f);
+    }
 
-export class Cases<A, B> {
+    _cases: Array<[Check, CaseBranch<A>]>;
 
-    _pattern: Pattern<A>;
-    _cases: Array<Case<A, B>>;
-
-    constructor(pattern: Pattern<A>) {
-        this._pattern = pattern;
+    constructor() {
         this._cases = [];
     }
 
-    case(match: string, f: Object => B): Cases<A, B> {
-        const matchParsed = match.split("::").map(v => v.trim());
-        this._cases.push(new Case(this._pattern, matchParsed, f));
+    case(matcher: Check, f: CaseBranch<A>): Pattern<A> {
+        this._cases.push([matcher, f]);
 
         return this;
     }
 
-    get cases(): Array<Case<A, B>> {
-        return this._cases;
-    }
-
-    match(v: A): B {
-        let parameters = {};
-        const matchedCase = this._cases.find((match) => {
-            const result = match.test(v);
-            parameters = result[1];
-            return result[0]
+    match(value: CheckableValue): A {
+        let executed = null;
+        this._cases.find((curCase) => {
+            const matched = curCase[0](value);
+            if (typeof matched === 'boolean') {
+                if (matched) executed = curCase[1]({});
+                return matched;
+            } else {
+                executed = curCase[1](matched);
+                return true;
+            }
         });
 
-        if (matchedCase == null) throw new Error("Inexhaustive match.");
-        return matchedCase.f(parameters)
-    }
-
-}
-
-export class Case<A, B> {
-
-    _pattern: Pattern<A>;
-    _match: Array<string>;
-    _f: Object => B;
-
-    constructor(pattern: Pattern<A>, match: Array<string>, f: Object => B) {
-        this._pattern = pattern;
-        this._match = match;
-        this._f = f;
-    }
-
-    get f(): Object => B {
-        return this._f;
-    }
-
-    /**
-     * Test if a given instance of A matches the pattern.
-     */
-    test(v: A): [boolean, Object] {
-        const parameters = {};
-
-        const matched = this._match.reduce(([acc, i], part) => {
-            if (!acc) return [false, -1];
-
-            if (part === "_") {
-                return [true, i + 1];
-            } else {
-                // $FlowFixMe
-                const partVal = v[this._pattern.get(i)];
-                if (partVal != null) {
-                    parameters[part] = partVal;
-                    return [true, i + 1];
-                }
-            }
-
-            return [false, -1]
-        }, [true, 0])[0];
-
-        return [matched, matched ? parameters : {}];
+        if (executed == null) throw new Error('Inexhaustive match.');
+        return executed;
     }
 
 }

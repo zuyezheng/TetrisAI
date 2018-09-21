@@ -1,9 +1,11 @@
+import type State from "functional/State.js";
+
 import _ from "lodash";
+
 import React from "react";
-import {Random} from "math/Random.js";
-import type {State} from "functional/State.js";
-import {TetrisBoard} from "tetris/TetrisBoard.js";
-import {TetrisInput} from "tetris/TetrisInput.js";
+import Random from "math/Random.js";
+import TetrisBoard from "tetris/TetrisBoard.js";
+import TetrisInput from "tetris/TetrisInput.js";
 
 export class Tetris extends React.Component<Props, ReactState> {
 

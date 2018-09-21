@@ -1,4 +1,4 @@
-export class MatrixDim {
+export default class MatrixDim {
 
     _rows: number;
     _cols: number;

@@ -1,9 +1,9 @@
-import {State} from "functional/State.js";
+import State from "functional/State.js";
 
 /**
  * Functionally pure (immutable) random number generator.
  */
-export class Random {
+export default class Random {
 
     static Generator: Random.Generator;
 

@@ -1,63 +1,73 @@
-import {Pattern} from "functional/Pattern.js";
+import CaseClass from 'functional/CaseClass.js';
+import Pattern from 'functional/Pattern.js';
 
 /**
  * @author zuye.zheng
  */
-export class Option<A> {
+export default class Option<A> extends CaseClass {
 
-    _value: A | void;
-
-    static none<B>(): Option<B> {
-        return new Option(undefined);
+    static none(): None<A> {
+        return new None();
     }
 
-    static some<A>(value: A): Option<A> {
-        return new Option(value);
-    }
-
-    constructor(value?: A) {
-        this._value = value;
+    static some(value: A): Option<A> {
+        return new Some(value);
     }
 
     getOrElse(other: () => A): A {
-        return PATTERN
-            .case("v", ({v}) => v)
-            .case("_", () => other())
+        return Pattern
+            .case(Some.u('v'), ({v}) => v)
+            .case(Pattern._, () => other())
             .match(this);
     }
 
     orElse(other: () => Option<A>): Option<A> {
-        return PATTERN
-            .case("v", () => this)
-            .case("_", () => other())
+        return Pattern
+            .case(Some.u('v'), () => this)
+            .case(Pattern._, () => other())
             .match(this);
     }
 
     flatMap<B>(f: A => Option<B>): Option<B> {
-        return PATTERN
-            .case("v", ({v}) => f(v))
-            .case("_", () => Option.none())
+        return Pattern
+            .case(Some.u('v'), ({v}) => f(v))
+            .case(Pattern._, () => Option.none())
             .match(this);
     }
 
     map<B>(f: A => B): Option<B> {
-        return PATTERN
-            .case("v", ({v}) => Option.some(f(v)))
-            .case("_", () => Option.none())
+        return Pattern
+            .case(Some.u('v'), ({v}) => Option.some(f(v)))
+            .case(Pattern._, () => Option.none())
             .match(this);
     }
 
     filter(f: A => boolean): Option<A> {
-        return PATTERN
-            .case("v", ({v}) => f(v) ? this : Option.none())
-            .case("_", () => Option.none())
+        return Pattern
+            .case(Some.u('v'), ({v}) => f(v) ? this : Option.none())
+            .case(Pattern._, () => Option.none())
             .match(this);
     }
 
     isEmpty(): boolean {
-        return this._value == null;
+        return this instanceof None;
     }
 
 }
 
-const PATTERN = new Pattern(["_value"]);
+class None<A> extends Option<A> {
+    static C_ARGS = [];
+}
+
+class Some<A> extends Option<A> {
+
+    static C_ARGS = ['value'];
+
+    +value: A;
+
+    constructor(value: A) {
+        super();
+        this.value = value;
+    }
+
+}

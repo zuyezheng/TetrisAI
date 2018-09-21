@@ -13,7 +13,7 @@
  * 
  * @author zuye.zheng
  */
-export class Enum<A> {
+export default class Enum<A> {
 
     static _NAME_TO_ENUM: Map<string, A>;
     static _CODE_TO_ENUM: Map<string, A>;

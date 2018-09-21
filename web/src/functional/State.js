@@ -1,4 +1,9 @@
-export class State<A, S> {
+/**
+ * State monad.
+ *
+ * @author zuye.zheng
+ */
+export default class State<A, S> {
 
     run: S => [A, S];
 

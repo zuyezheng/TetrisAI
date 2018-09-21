@@ -1,6 +1,8 @@
 import GpuJS from "gpu.js";
-import {MatrixDim} from "math/MatrixDim.js";
-import {Matrix} from "math/Matrix.js";
+import MatrixDim from "math/MatrixDim.js";
+import Matrix from "math/Matrix.js";
+
+const GPU = new GpuJS();
 
 /**
  * GPU accelerated matrix multiplication. GPU acceleration requires creating a kernal of a fixed output size so a kernal
@@ -12,17 +14,17 @@ import {Matrix} from "math/Matrix.js";
  *
  * @author zuye.zheng
  */
-export class MatrixMultiply {
+export default class MatrixMultiply {
 
-    _dim1: MatrixDim;
-    _dim2: MatrixDim;
+    +dim1: MatrixDim;
+    +dim2: MatrixDim;
     _kernal: (Array<Array<number>>, Array<Array<number>>) => Array<Array<number>>;
 
     constructor(dim1: MatrixDim, dim2: MatrixDim) {
         if (!dim1.canMultiply(dim2)) throw new Error("Mismatched matrices.");
 
-        this._dim1 = dim1;
-        this._dim2 = dim2;
+        this.dim1 = dim1;
+        this.dim2 = dim2;
 
         this._kernal = GPU.createKernel(function (m1, m2) {
             let v = 0;
@@ -37,14 +39,6 @@ export class MatrixMultiply {
         });
     }
 
-    get dim1() {
-        return this._dim1;
-    }
-
-    get dim2() {
-        return this._dim2;
-    }
-
     multiply(m1: Matrix, m2: Matrix): Matrix {
         if (!(m1.dim.is(this.dim1) && m2.dim.is(this.dim2))) throw new Error("Matrices do not match kernal.");
 
@@ -56,5 +50,3 @@ export class MatrixMultiply {
     }
 
 }
-
-const GPU = new GpuJS();

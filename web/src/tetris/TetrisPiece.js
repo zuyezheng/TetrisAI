@@ -1,14 +1,14 @@
-import {State} from "functional/State.js";
-import {Random} from "math/Random.js";
-import {Matrix} from "math/Matrix.js";
-import {TransformationMatrix} from "math/TransformationMatrix.js";
+import State from "functional/State.js";
+import Random from "math/Random.js";
+import Matrix from "math/Matrix.js";
+import TransformationMatrix from "math/TransformationMatrix.js";
 
 /**
  * Immutable Tetris piece.
  *
  * @author zuye.zheng
  */
-export class TetrisPiece {
+export default class TetrisPiece {
 
     /**
      * Generate new piece given a pure random number generator.

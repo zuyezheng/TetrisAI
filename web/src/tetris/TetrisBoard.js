@@ -1,14 +1,14 @@
-import {List} from "functional/List.js";
-import {Option} from "functional/Option.js";
-import {Matrix} from "math/Matrix.js";
-import {TetrisPiece} from "tetris/TetrisPiece.js";
+import List from "functional/List.js";
+import Option from "functional/Option.js";
+import Matrix from "math/Matrix.js";
+import TetrisPiece from "tetris/TetrisPiece.js";
 
 /**
  * Immutable state of tetris board at the current moment in time.
  *
  * @author zuye.zheng
  */
-export class TetrisBoard {
+export default class TetrisBoard {
 
     static _clipPiece(piece: TetrisPiece, row: number): [Matrix, number] {
         if (row < 0) {

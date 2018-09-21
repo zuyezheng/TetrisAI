@@ -1,15 +1,15 @@
-import {Option} from "functional/Option.js";
-import {State} from "functional/State.js";
-import {Random} from "math/Random.js";
-import {TetrisBoard} from "tetris/TetrisBoard.js";
-import {TetrisPiece} from "tetris/TetrisPiece.js";
+import Option from "functional/Option.js";
+import State from "functional/State.js";
+import Random from "math/Random.js";
+import TetrisBoard from "tetris/TetrisBoard.js";
+import TetrisPiece from "tetris/TetrisPiece.js";
 
 /**
  * Input types to a tetris game that alter the board.
  *
  * @author zuye.zheng
  */
-export class TetrisInput {
+export default class TetrisInput {
 
     static Tick: TetrisInput.Tick;
     static MoveX: TetrisInput.MoveX;

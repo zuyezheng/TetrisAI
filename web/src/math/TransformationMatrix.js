@@ -1,6 +1,6 @@
-import {Matrix} from "math/Matrix.js";
+import Matrix from "math/Matrix.js";
 
-export class TransformationMatrix {
+export default class TransformationMatrix {
 
     static rotation(degree: number): Matrix {
         const rad = degree / 180 * Math.PI;

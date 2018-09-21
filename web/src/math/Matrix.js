@@ -1,34 +1,26 @@
-import {MatrixDim} from "math/MatrixDim.js";
+import MatrixDim from 'math/MatrixDim.js';
 
 /**
  * Immutable matrix with some functional operations.
  *
  * @author zuye.zheng
  */
-export class Matrix {
+export default class Matrix {
 
-    _dim: MatrixDim;
-    _rows: Array<Array<number>>;
+    +dim: MatrixDim;
+    +rows: Array<Array<number>>;
 
     static fill(numRows: number, numCols: number, val: number): Matrix {
         return new Matrix(new Array(numRows).fill(true).map(() => new Array(numCols).fill(val)));
     }
 
     constructor(rows: Array<Array<number>>) {
-        this._rows = rows;
-        this._dim = new MatrixDim(this._rows.length, this._rows[0].length);
-    }
-
-    get dim(): MatrixDim {
-        return this._dim
+        this.rows = rows;
+        this.dim = new MatrixDim(this.rows.length, this.rows[0].length);
     }
 
     getRow(i: number): Array<number> {
-        return this._rows[i];
-    }
-
-    get rows(): Array<Array<number>> {
-        return this._rows;
+        return this.rows[i];
     }
 
     /**
@@ -39,7 +31,7 @@ export class Matrix {
     }
 
     merge(m: Matrix, rowI: number, colI: number, f: (number, number) => number): Matrix {
-        return new Matrix(this._rows.map((row, i) => {
+        return new Matrix(this.rows.map((row, i) => {
             // retain untouched rows
             if(i < rowI || i >= rowI + m.dim.rows) return row;
 

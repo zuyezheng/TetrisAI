@@ -1,12 +1,15 @@
-import {Pattern} from "functional/Pattern.js";
-import {TuplePattern} from "functional/TuplePattern.js";
+import CaseClass from 'functional/CaseClass.js';
+import Pattern from 'functional/Pattern.js';
+import Tuple from 'functional/Tuple.js'
 
 /**
  * Functional lazy evaluated and possibly infinite stream.
  *
  * @author zuye.zheng
  */
-export class Stream<A> {
+export class Stream<A> extends CaseClass {
+
+    static C_ARGS = ['_head', '_tail'];
 
     _head: (() => A) | void;
     _tail: (() => Stream<A>) | void;
@@ -23,14 +26,15 @@ export class Stream<A> {
     }
 
     constructor(head?: () => A, tail?: () => Stream<A>) {
+        super();
         this._head = head;
         this._tail = tail;
     }
 
     foldRight<B>(acc: () => B, f: (A, () => B) => B): B {
-        return PATTERN
-            .case("head :: tail", ({head, tail}) => f(head(), () => tail().foldRight(acc, f)))
-            .case("_", acc)
+        return Pattern
+            .case(Stream.u('head', 'tail'), ({head, tail}) => f(head(), () => tail().foldRight(acc, f)))
+            .case(Pattern._, acc)
             .match(this)
     }
 
@@ -41,14 +45,12 @@ export class Stream<A> {
     }
 
     zipWith<B, C>(s: Stream<B>, f: (A, B) => C): Stream<C> {
-        return new TuplePattern(PATTERN, PATTERN)
-            .case("h1::t1, h2::t2", ({h1, t1, h2, t2}) =>
+        return Pattern
+            .case(Tuple.u(Stream.u('h1', 't1'), Stream.u('h2', 't2')), ({h1, t1, h2, t2}) =>
                 new Stream(() => f(h1(), h2()), () => t1().zipWith(t2(), f))
             )
-            .case("_, _", () => Stream.empty())
-            .match(this, s)
+            .case(Pattern._, () => Stream.empty())
+            .match(new Tuple(this, s))
     }
 
 }
-
-const PATTERN = new Pattern(["_head", "_tail"]);
