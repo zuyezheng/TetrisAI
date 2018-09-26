@@ -12,6 +12,9 @@ export default class CaseClass {
         return this.u(...args);
     }
 
+    /**
+     * Shorthand should be used most often, defining the real function here to save on a frame in the stack.
+     */
     static u(...args: Array<string | Check>): Check {
         const Clazz = this;
         if(Clazz.C_ARGS.length !== args.length) throw new Error("Mismatched argument lengths.");
